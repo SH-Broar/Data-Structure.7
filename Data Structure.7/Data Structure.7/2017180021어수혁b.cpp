@@ -10,17 +10,16 @@ void movexy(int x,int y)
 void drawUi()
 {
 	movexy(1, 1);
-	printf("┌ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┬ ┐\n");
+	printf("┌┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┐\n");
 	for (int i = 0; i < 17; i++)
 	{
-		printf("├ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┼ ┤\n");
+		printf("├┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┤\n");
 	}
-	printf("└ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┴ ┘\n");
+	printf("└┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┘\n");
 }
 
 int main()
 {
-	
 	int getX = -1, getY = -1;
 	int p1 = 0,p2 = 0;
 	int turnofwho = 0;
@@ -43,6 +42,118 @@ int main()
 
 		scanf("%d %d", &getX, &getY);
 		
+		if (getX == 100)
+		{
+			switch (getY)
+			{
+			case 1: //파일에 저장
+			{
+				FILE* fp = fopen("save.txt", "w+");
+				movexy(30, 20);
+				printf("                   "); //지우기
+
+				for (int i = 0; i < 19; i++)
+				{
+					for (int j = 0; j < 19; j++)
+					{
+						if (table[j][i] == 1)
+						{
+							fprintf(fp,"1");
+						}
+						else if (table[j][i] == 2)
+						{
+							fprintf(fp,"2");
+						}
+						else
+						{
+							fprintf(fp, "0");
+						}
+					}
+					fprintf(fp, "\n");
+				}
+				movexy(30, 19);
+				printf("저장 완료!");
+				fclose(fp);
+			}
+			continue;
+				break;
+
+			case 2: //파일에서 불러오기
+			{
+				FILE* fp = fopen("save.txt", "r");
+				char fileCrop[2] = { 0 };
+				int b=0, w=0;
+				if (fp == NULL)
+				{
+					movexy(30, 19);
+					printf("파일이 없는걸요!");
+					movexy(30, 20);
+					printf("                   "); //지우기
+					continue;
+				}
+				movexy(30, 20);
+				printf("                   "); //지우기
+
+				for (int i = 0; i < 19; i++)
+				{
+					for (int j = 0; j < 19; j++)
+					{
+						fgets(fileCrop, 2, fp);
+						//printf("%c", fileCrop[0]);
+						if (fileCrop[0] == '0')
+						{
+							table[j][i] = 0;
+						}
+						else if (fileCrop[0] == '1')
+						{
+							table[j][i] = 1;
+						}
+						else if (fileCrop[0] == '2')
+						{
+							table[j][i] = 2;
+						}
+					}
+				}
+				drawUi();
+				for (int i = 0; i < 19; i++)
+				{
+					for (int j = 0; j < 19; j++) 
+					{
+						if (table[j][i] == 1)
+						{
+							movexy(j + 1, i + 1);
+							printf("★");
+							b++;
+						}
+						else if (table[j][i] == 2)
+						{
+							movexy(j + 1, i + 1);
+							printf("☆");
+							w++;
+						}
+					}
+				}
+				if (b > w)
+				{
+					turnofwho = 1;
+				}
+				else
+				{
+					turnofwho = 0;
+				}
+				fclose(fp);
+			}
+			goto TRACK;
+				break;
+
+			default:
+				movexy(30, 20);
+				printf("                   "); //지우기
+				break;
+			}
+
+			//continue;
+		}
 		if (getX <= 0 || getX > 19 || getY <= 0 || getY > 19)
 		{
 			movexy(30, 24);
@@ -94,6 +205,7 @@ int main()
 			getX = -1, getY = -1;
 		}
 		/////////////////////////////////////////////////////////////////////////////
+		TRACK:
 		for (int i = 0; i < 19; i++)
 		{
 			nBlack = 0;
@@ -408,7 +520,7 @@ int main()
 				}
 			}
 
-			movexy(1, i + 46);
+			/*movexy(1, i + 46);
 			if (SavedMaximum[0] > SavedMaximum[1])
 			{
 				printf("b %d", SavedMaximum[0]);
@@ -420,7 +532,7 @@ int main()
 			else
 			{
 				printf("= %d", SavedMaximum[0]);
-			}
+			}*/
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -484,7 +596,7 @@ int main()
 				}
 			}
 
-			movexy(5, i + 28);
+			/*movexy(5, i + 28);
 			if (SavedMaximum[0] > SavedMaximum[1])
 			{
 				printf("b %d", SavedMaximum[0]);
@@ -496,7 +608,7 @@ int main()
 			else
 			{
 				printf("= %d", SavedMaximum[0]);
-			}
+			}*/
 		}
 	} 
 	
