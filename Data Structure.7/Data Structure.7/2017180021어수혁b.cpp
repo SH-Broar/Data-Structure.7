@@ -36,8 +36,6 @@ int main()
 
 	stone UndoStack[300] = { 0 };
 	int undoPointer = 0;
-	stone RedoStack[300] = { 0 };
-	int redoPointer = 0;
 
 	int nBlack = 0, nWhite = 0;
 	int Maximum[2] = { 0 };
@@ -46,6 +44,10 @@ int main()
 
 	int startingMax[2] = { 0 };
 
+	for (int i = 0; i < 300; i++)
+	{
+		UndoStack[i].x = -1;
+	}
 	drawUi();
 
 	while(1)
@@ -55,6 +57,7 @@ int main()
 		movexy(30, 20);
 
 		printf("1 : 돌 놓기, 2 : 메뉴");
+		movexy(30, 20);
 		choice = getch();
 		movexy(30, 19);
 		printf("                     "); //지우기
@@ -92,8 +95,22 @@ int main()
 								fprintf(fp, "0");
 							}
 						}
+					}
+					fclose(fp);
+
+					fp = fopen("stack.txt", "w+");
+					movexy(30, 20);
+					printf("                   "); //지우기
+
+					for (int i = 0; i < 300; i++)
+					{
+						fprintf(fp, "%2d", UndoStack[i].x);
+						fprintf(fp, "%2d", UndoStack[i].y);
+						fprintf(fp, "%2d", UndoStack[i].color);
+						fprintf(fp, "%2d", UndoStack[i].isntEmpty);
 						fprintf(fp, "\n");
 					}
+					fprintf(fp, "%2d", undoPointer);
 					movexy(30, 19);
 					printf("저장 완료!");
 					fclose(fp);
@@ -165,8 +182,18 @@ int main()
 						turnofwho = 0;
 					}
 					fclose(fp);
+
+					fp = fopen("stack.txt", "r");
+					movexy(30, 20);
+					printf("                   "); //지우기
+
+					for (int i = 0; i < 300; i++)
+					{
+						fscanf(fp, " %d %d %d %d", &UndoStack[i].x, &UndoStack[i].y, &UndoStack[i].color, &UndoStack[i].isntEmpty);
+					}
+					fscanf(fp, "%d", &undoPointer);
+					fclose(fp);
 				}
-				goto TRACK;
 				break;
 
 				default:
@@ -175,7 +202,7 @@ int main()
 					break;
 				}
 
-				//continue;
+				continue;
 			}
 			//
 			if (getX <= 0 || getX > 19 || getY <= 0 || getY > 19)
@@ -196,7 +223,15 @@ int main()
 				UndoStack[undoPointer].y = getY;
 				UndoStack[undoPointer].color = 0;
 				UndoStack[undoPointer].isntEmpty = 1;
+				
 				undoPointer++;
+				for (int i = undoPointer; i < 300; i++)
+				{
+					UndoStack[i].x = -1;
+					UndoStack[i].y = 0;
+					UndoStack[i].color = 0;
+					UndoStack[i].isntEmpty = 0;
+				}
 				movexy(getX, getY);
 				printf("★");
 				movexy(30, 24);
@@ -206,6 +241,7 @@ int main()
 				movexy(30, 20);
 				table[getX - 1][getY - 1] = 1;
 				turnofwho = 1;//턴 변경
+				
 				p1++;
 				getX = -1, getY = -1;
 			}
@@ -215,7 +251,15 @@ int main()
 				UndoStack[undoPointer].y = getY;
 				UndoStack[undoPointer].color = 1;
 				UndoStack[undoPointer].isntEmpty = 1;
+				
 				undoPointer++;
+				for (int i = undoPointer; i < 300; i++)
+				{
+					UndoStack[i].x = -1;
+					UndoStack[i].y = 0;
+					UndoStack[i].color = 0;
+					UndoStack[i].isntEmpty = 0;
+				}
 				movexy(getX, getY);
 				printf("☆");
 				movexy(30, 24);
@@ -368,7 +412,7 @@ int main()
 					}
 				}
 
-				/*movexy(25, i + 1);
+				movexy(25, i + 1);
 				if (SavedMaximum[0] > SavedMaximum[1])
 				{
 					printf("b %d", SavedMaximum[0]);
@@ -377,7 +421,7 @@ int main()
 						movexy(startingMax[0], i + 1);
 						for (int k = 0; k < SavedMaximum[0]; k++)
 						{
-							printf("※");
+							//printf("※");
 						}
 					}
 
@@ -390,7 +434,7 @@ int main()
 						movexy(startingMax[1], i + 1);
 						for (int k = 0; k < SavedMaximum[1]; k++)
 						{
-							printf("※");
+							//printf("※");
 						}
 					}
 				}
@@ -402,15 +446,15 @@ int main()
 						movexy(startingMax[0], i + 1);
 						for (int k = 0; k < SavedMaximum[0]; k++)
 						{
-							printf("※");
+							//printf("※");
 						}
 						movexy(startingMax[1], i + 1);
 						for (int k = 0; k < SavedMaximum[1]; k++)
 						{
-							printf("※");
+							//printf("※");
 						}
 					}
-				}*/
+				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////////
@@ -554,7 +598,7 @@ int main()
 					}
 				}
 
-				/*movexy(1, i + 46);
+				movexy(1, i + 46);
 				if (SavedMaximum[0] > SavedMaximum[1])
 				{
 					printf("b %d", SavedMaximum[0]);
@@ -566,7 +610,7 @@ int main()
 				else
 				{
 					printf("= %d", SavedMaximum[0]);
-				}*/
+				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////////
@@ -630,7 +674,7 @@ int main()
 					}
 				}
 
-				/*movexy(5, i + 28);
+				movexy(5, i + 28);
 				if (SavedMaximum[0] > SavedMaximum[1])
 				{
 					printf("b %d", SavedMaximum[0]);
@@ -642,7 +686,7 @@ int main()
 				else
 				{
 					printf("= %d", SavedMaximum[0]);
-				}*/
+				}
 			}
 		}
 		else
@@ -666,6 +710,7 @@ int main()
 					undoPointer--;
 					UndoStack[undoPointer].isntEmpty = 0;
 					table[UndoStack[undoPointer].x-1][UndoStack[undoPointer].y-1] = 0;
+
 					if (turnofwho == 0)
 						turnofwho = 1;
 					else
@@ -687,11 +732,39 @@ int main()
 							}
 						}
 					}
+					goto TRACK;
 				}
 			}
 			else if (choice == 'R')
 			{
-				
+				if (UndoStack[undoPointer].isntEmpty == 0 && UndoStack[undoPointer].x != -1)
+				{
+					table[UndoStack[undoPointer].x - 1][UndoStack[undoPointer].y - 1] = UndoStack[undoPointer].color+1;
+					undoPointer++;
+					
+					if (turnofwho == 0)
+						turnofwho = 1;
+					else
+						turnofwho = 0;
+					drawUi();
+					for (int i = 0; i < 19; i++)
+					{
+						for (int j = 0; j < 19; j++)
+						{
+							if (table[j][i] == 1)
+							{
+								movexy(j + 1, i + 1);
+								printf("★");
+							}
+							else if (table[j][i] == 2)
+							{
+								movexy(j + 1, i + 1);
+								printf("☆");
+							}
+						}
+					}
+					goto TRACK;
+				}
 			}
 		}
 	} 
